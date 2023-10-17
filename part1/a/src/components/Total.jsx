@@ -2,10 +2,10 @@ import React from "react";
 
 import PropTypes from "prop-types";
 
-const Total = ({ exercises1, exercises2, exercises3 }) => {
+const Total = ({ total }) => {
   return (
     <div>
-      <p>Number of exercises {exercises1 + exercises2 + exercises3}</p>
+      <p>Number of exercises {total}</p>
     </div>
   );
 };

@@ -1,25 +1,21 @@
 import React from "react";
 
-
-
-const Part = ({number}) =>{
-  return(
-    <div>
-     <p> part-:{number} exercises-{number}</p>
-    </div>
-  )
-}
-
-const Content = () => {
+const Part = ({ part, exercises }) => {
   return (
     <div>
-      <Part number={1}/>
-      <Part number={2}/>
-      <Part number={3}/>
+      {part} {exercises}
     </div>
   );
 };
 
-
+const Content = (props) => {
+  return (
+    <div>
+      <Part part={props.part1} exercises={props.exercises1} />
+      <Part part={props.part2} exercises={props.exercises2} />
+      <Part part={props.part3} exercises={props.exercises3} />
+    </div>
+  );
+};
 
 export default Content;
