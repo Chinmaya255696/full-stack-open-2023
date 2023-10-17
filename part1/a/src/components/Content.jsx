@@ -1,7 +1,6 @@
 import React from "react";
 
 const Part = ({ part }) => {
-  console.log(part);
   return (
     <div>
       {part.name} {part.exercises}
@@ -10,13 +9,11 @@ const Part = ({ part }) => {
 };
 
 const Content = ({ parts }) => {
-  console.log(parts);
-
   return (
     <div>
-      <Part part={parts[0]} />
-      <Part part={parts[1]} />
-      <Part part={parts[2]} />
+      {parts.map((part, index) => (
+        <Part key={index} part={part} />
+      ))}
     </div>
   );
 };
