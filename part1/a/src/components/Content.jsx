@@ -1,21 +1,22 @@
 import React from "react";
 
-const Part = (props) => {
-  console.log(props)
+const Part = ({ part }) => {
+  console.log(part);
   return (
     <div>
-      {props.part.name} {props.part.exercises}
+      {part.name} {part.exercises}
     </div>
   );
 };
 
-const Content = (props) => {
-  console.log(props);
+const Content = ({ parts }) => {
+  console.log(parts);
+
   return (
     <div>
-      <Part part={props.part1}  />
-      <Part part={props.part2}  />
-      <Part part={props.part3}  />
+      <Part part={parts[0]} />
+      <Part part={parts[1]} />
+      <Part part={parts[2]} />
     </div>
   );
 };

@@ -1,21 +1,15 @@
 import React from "react";
 
-import PropTypes from "prop-types";
-
-const Total = ({ total }) => {
+const Total = ({ parts }) => {
+  console.log(parts);
   return (
     <div>
-      <p>Number of exercises {total}</p>
+      <p>
+        Number of exercises{" "}
+        {parts.reduce((total, parts) => total + parts.exercises, 0)}
+      </p>
     </div>
   );
-};
-
-Total.propTypes = {
-  exercises1: PropTypes.number.isRequired,
-
-  exercises2: PropTypes.number.isRequired,
-
-  exercises3: PropTypes.number.isRequired,
 };
 
 export default Total;
