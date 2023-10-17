@@ -1,37 +1,25 @@
 import React from "react";
 
-import PropTypes from "prop-types";
 
-const Content = ({
-  part1,
-  exercises1,
-  part2,
-  exercises2,
-  part3,
-  exercises3,
-}) => {
+
+const Part = ({number}) =>{
+  return(
+    <div>
+     <p> part-:{number} exercises-{number}</p>
+    </div>
+  )
+}
+
+const Content = () => {
   return (
     <div>
-      <p>
-        {part1} {exercises1}
-      </p>
-      <p>
-        {part2} {exercises2}
-      </p>
-      <p>
-        {part3} {exercises3}
-      </p>
+      <Part number={1}/>
+      <Part number={2}/>
+      <Part number={3}/>
     </div>
   );
 };
 
-Content.propTypes = {
-  part1: PropTypes.string.isRequired,
-  exercises1: PropTypes.number.isRequired,
-  part2: PropTypes.string.isRequired,
-  exercises2: PropTypes.number.isRequired,
-  part3: PropTypes.string.isRequired,
-  exercises3: PropTypes.number.isRequired,
-};
+
 
 export default Content;
