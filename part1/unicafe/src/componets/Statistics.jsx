@@ -1,6 +1,8 @@
 import React from "react";
 import StatisticLine from "./StatisticsLine";
 
+import "./Statistics.css"
+
 const Statistics = ({ good, neutral, bad }) => {
   const all = good + neutral + bad;
   const average = (good - bad) / all || 0;
@@ -8,6 +10,7 @@ const Statistics = ({ good, neutral, bad }) => {
 
   return (
     <table>
+    <tbody>
     
         <StatisticLine text="Good" value={good} />
         <StatisticLine text="Neutral" value={neutral} />
@@ -18,7 +21,7 @@ const Statistics = ({ good, neutral, bad }) => {
           text="Positive"
           value={positivePercentage.toFixed(2) + "%"}
         />
-     
+     </tbody>
     </table>
   );
 };
