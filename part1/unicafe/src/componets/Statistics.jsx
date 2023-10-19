@@ -1,5 +1,5 @@
-// Statistics.js
 import React from "react";
+import StatisticLine from "./StatisticsLine";
 
 const Statistics = ({ good, neutral, bad }) => {
   const all = good + neutral + bad;
@@ -8,12 +8,12 @@ const Statistics = ({ good, neutral, bad }) => {
 
   return (
     <div>
-      <p>Good: {good}</p>
-      <p>Neutral: {neutral}</p>
-      <p>Bad: {bad}</p>
-      <p>All: {all}</p>
-      <p>Average: {average.toFixed(2)}</p>
-      <p>Positive Percentage: {positivePercentage.toFixed(2)}%</p>
+      <StatisticLine text="Good" value={good} />
+      <StatisticLine text="Neutral" value={neutral} />
+      <StatisticLine text="Bad" value={bad} />
+      <StatisticLine text="All" value={all} />
+      <StatisticLine text="Average" value={average.toFixed(2)} />
+      <StatisticLine text="Positive Percentage" value={positivePercentage.toFixed(2) + "%"} />
     </div>
   );
 };
