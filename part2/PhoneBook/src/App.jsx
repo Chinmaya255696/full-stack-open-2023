@@ -1,4 +1,7 @@
 import { useState } from "react";
+import Filter from "./components/Filter";
+import PersonForm from "./components/PersonForm";
+import Persons from "./components/Persons";
 
 function App() {
   const [persons, setPersons] = useState([
@@ -40,49 +43,30 @@ function App() {
   const handleSearchChange = (event) => {
     console.log(event.target.value);
     setSearchQuery(event.target.value);
-  }
-  const filteredPersons = persons.filter((person) =>{
-    return person.name.toLowerCase().includes(searchQuery.toLowerCase())
-  })
+  };
+  const filteredPersons = persons.filter((person) => {
+    return person.name.toLowerCase().includes(searchQuery.toLowerCase());
+  });
   console.log(filteredPersons);
   return (
     <>
       <h1>PhoneBook</h1>
-      <p>
-        filter Shown With{" "}
-        <input
-          type="text"
-          placeholder="Search by name"
-          value={searchQuery}
-          onChange={handleSearchChange}
-        />
-      </p>
-      <h1>add a new</h1>
-      <form>
-        <p>
-          name:
-          <input value={newName} onChange={handleSetNewName} />
-        </p>
-        <p>
-          number: <input value={newNumber} onChange={handleSetNewNumber} />
-        </p>
-        <button type="submit" onClick={handleAdd}>
-          add
-        </button>
-      </form>
-      <h1>Numbers</h1>
-      {filteredPersons.map((person) => (
-        <div key={person.id}>
-          <p> name:-{person.name} </p>
-          <p>mob:-{person.number}</p>
-        </div>
-      ))}
+      <Filter
+        searchQuery={searchQuery}
+        handleSearchChange={handleSearchChange}
+      />
+      <h2>add a new</h2>
+      <PersonForm
+        newName={newName}
+        newNumber={newNumber}
+        handleAdd={handleAdd}
+        handleSetNewName={handleSetNewName}
+        handleSetNewNumber={handleSetNewNumber}
+      />
+      <h2>Numbers</h2>
+      <Persons persons={filteredPersons} />
     </>
   );
 }
 
 export default App;
-
-
-
-
