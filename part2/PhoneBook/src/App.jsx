@@ -30,9 +30,7 @@ console.log("render", persons.length, "persons");
       number: newNumber,
     };
 
-    const isPresent = persons.some(
-      (person) => person.name === personObject.name
-    );
+    const isPresent = persons.some((person) => person.name === personObject.name);
     isPresent
       ? alert(`${newName} is already present in the PhoneBook.`)
       : setPersons(persons.concat(personObject));
