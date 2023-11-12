@@ -3,6 +3,7 @@ import axios from "axios";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import PhoneBookService from "./Services/PhoneBook.js"
 
 function App() {
   const [persons, setPersons] = useState([]);
@@ -13,11 +14,17 @@ function App() {
 
   const hook = () =>{
     console.log("effect")
-    axios.get("http://localhost:3000/persons")
-    .then(response => {
-      console.log("Promise fulfilled");
-      setPersons(response.data);
-    } );
+
+   const fetchData = async () =>{
+  try{
+   const data = await PhoneBookService.getAll();
+   console.log("Data Recevied:", data);
+   setPersons(data)
+  }catch(error){
+    console.error("Error fetching data:", error);
+  }
+   }  
+   fetchData();
   }
 console.log("render", persons.length, "persons");
   useEffect(hook, [])
@@ -34,6 +41,12 @@ console.log("render", persons.length, "persons");
     isPresent
       ? alert(`${newName} is already present in the PhoneBook.`)
       : setPersons(persons.concat(personObject));
+     PhoneBookService.create( personObject).then(response => {
+      console.log("Promise fulfilled");
+      console.log(response)
+    } );
+    console.log(personObject);
+    setPersons(persons.concat(personObject));
     setNewName("");
     setNewNumber("");
   };
@@ -53,6 +66,8 @@ console.log("render", persons.length, "persons");
     return person.name.toLowerCase().includes(searchQuery.toLowerCase());
   });
   console.log(filteredPersons);
+
+
   return (
     <>
       <h1>PhoneBook</h1>
@@ -70,6 +85,7 @@ console.log("render", persons.length, "persons");
       />
       <h2>Numbers</h2>
       <Persons persons={filteredPersons} />
+      <button>delete</button>
     </>
   );
 }

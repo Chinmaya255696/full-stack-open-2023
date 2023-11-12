@@ -3,6 +3,7 @@ import noteService from "./services/notes";
 import Note from "./components/Note";
 
 
+
 const App = () => {
   const [notes, setNotes] = useState([]);
 
