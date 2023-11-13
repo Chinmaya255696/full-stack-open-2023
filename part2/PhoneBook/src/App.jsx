@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import './index.css'
 import axios from "axios";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
@@ -29,7 +30,7 @@ function App() {
 console.log("render", persons.length, "persons");
   useEffect(hook, [])
 
-  const handleAdd = (event) => {
+  const handleAdd = async (event) => {
     event.preventDefault();
     const existingPerson = persons.find((person) => person.name === newName);
 
@@ -39,7 +40,7 @@ console.log("render", persons.length, "persons");
       if (confirmed) {
         try {
           const updatedPerson = { ...existingPerson, number: newNumber };
-           axios.put(`http://localhost:3000/persons/${existingPerson.id}`, updatedPerson);
+           await axios.put(`http://localhost:3000/persons/${existingPerson.id}`, updatedPerson);
           setPersons(persons.map(person => (person.id === existingPerson.id ? updatedPerson : person)));
         } catch (error) {
           console.error("Error updating phone number:", error);
@@ -48,9 +49,9 @@ console.log("render", persons.length, "persons");
     } else {
       // If person doesn't exist, add a new person
       try {
-        const newPerson = {  id: persons.length + 1, name: newName, number: newNumber };
-        const response =  axios.post("http://localhost:3000/persons", newPerson);
-        setPersons([...persons, response.data]);
+        const newPerson = {  id: persons[persons.length-1].id + 1, name: newName, number: newNumber };
+        const response = await axios.post("http://localhost:3000/persons", newPerson);
+        setPersons(persons.concat(response.data));
       } catch (error) {
         console.error("Error adding new person:", error);
       }
