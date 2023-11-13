@@ -31,24 +31,34 @@ console.log("render", persons.length, "persons");
 
   const handleAdd = (event) => {
     event.preventDefault();
-    const personObject = {
-      id: persons.length + 1,
-      name: newName,
-      number: newNumber,
-    };
+    const existingPerson = persons.find((person) => person.name === newName);
 
-    const isPresent = persons.some((person) => person.name === personObject.name);
-    isPresent
-      ? alert(`${newName} is already present in the PhoneBook.`)
-      : setPersons(persons.concat(personObject));
-     PhoneBookService.create( personObject).then(response => {
-      console.log("Promise fulfilled");
-      console.log(response)
-    } );
-    console.log(personObject);
-    setPersons(persons.concat(personObject));
-    setNewName("");
-    setNewNumber("");
+    if(existingPerson){
+       // If person already exists, show a confirmation alert
+       const confirmed = window.confirm(`${newName} already exists. Do you want to update the number?`);
+      if (confirmed) {
+        try {
+          const updatedPerson = { ...existingPerson, number: newNumber };
+           axios.put(`http://localhost:3000/persons/${existingPerson.id}`, updatedPerson);
+          setPersons(persons.map(person => (person.id === existingPerson.id ? updatedPerson : person)));
+        } catch (error) {
+          console.error("Error updating phone number:", error);
+        }
+      }
+    } else {
+      // If person doesn't exist, add a new person
+      try {
+        const newPerson = {  id: persons.length + 1, name: newName, number: newNumber };
+        const response =  axios.post("http://localhost:3000/persons", newPerson);
+        setPersons([...persons, response.data]);
+      } catch (error) {
+        console.error("Error adding new person:", error);
+      }
+    }
+
+   // Clear the input fields
+   setNewName("");
+   setNewNumber("");
   };
   const handleSetNewName = (event) => {
     setNewName(event.target.value);

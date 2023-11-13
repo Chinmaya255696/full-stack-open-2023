@@ -3,17 +3,17 @@
     {
       "id": 1,
       "name": "John Doe",
-      "mob": "123-456-7890"
+      "number": "785692"
     },
     {
       "id": 3,
       "name": "Alice Johnson",
-      "mob": "555-123-4567"
+      "number": "123-456-4500"
     },
     {
       "id": 5,
       "name": "Eva Davis",
-      "mob": "111-222-3333"
+      "number": "123-456-5500"
     }
   ]
 }
