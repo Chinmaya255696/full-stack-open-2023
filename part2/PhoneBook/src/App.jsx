@@ -84,8 +84,7 @@ console.log("render", persons.length, "persons");
         handleSetNewNumber={handleSetNewNumber}
       />
       <h2>Numbers</h2>
-      <Persons persons={filteredPersons} />
-      <button>delete</button>
+      <Persons persons={filteredPersons} setPersons={setPersons} />
     </>
   );
 }
