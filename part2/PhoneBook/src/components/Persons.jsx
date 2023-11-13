@@ -20,7 +20,7 @@ const Persons = ({ persons, setPersons}) => {
       {persons.map((person) => (
         <div key={person.id}>
           <p>name: {person.name}</p>
-          <p>mob: {person.mob}</p>
+          <p>mob: {person.number}</p>
          <DeleteButton id={person.id} onDelete={() => handleDelete(person.id)}/>
         </div>
       ))}
