@@ -5,6 +5,7 @@ import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import PhoneBookService from "./Services/PhoneBook.js"
+import Notification from "./components/Notification.jsx";
 
 function App() {
   const [persons, setPersons] = useState([]);
@@ -12,6 +13,8 @@ function App() {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [notification, setNotification] = useState("hy notifications");
+
 
   const hook = () =>{
     console.log("effect")
@@ -42,6 +45,14 @@ console.log("render", persons.length, "persons");
           const updatedPerson = { ...existingPerson, number: newNumber };
            await axios.put(`http://localhost:3000/persons/${existingPerson.id}`, updatedPerson);
           setPersons(persons.map(person => (person.id === existingPerson.id ? updatedPerson : person)));
+          setNotification(
+            <>
+            <strong>{updatedPerson.name}</strong> Number is Changed to <strong>{updatedPerson.number}</strong>
+            </>
+            )
+          setTimeout(()=>{
+            setNotification(null)
+          }, 8000)
         } catch (error) {
           console.error("Error updating phone number:", error);
         }
@@ -51,7 +62,17 @@ console.log("render", persons.length, "persons");
       try {
         const newPerson = {  id: persons[persons.length-1].id + 1, name: newName, number: newNumber };
         const response = await axios.post("http://localhost:3000/persons", newPerson);
+
         setPersons(persons.concat(response.data));
+       
+        setNotification(
+          <>
+          added <strong> {newPerson.name} </strong>  to the PhoneBook
+          </>
+          )
+        setTimeout(() =>{
+          setNotification(null)
+        }, 8000)
       } catch (error) {
         console.error("Error adding new person:", error);
       }
@@ -82,6 +103,7 @@ console.log("render", persons.length, "persons");
   return (
     <>
       <h1>PhoneBook</h1>
+      <Notification message={notification}/>
       <Filter
         searchQuery={searchQuery}
         handleSearchChange={handleSearchChange}
