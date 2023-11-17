@@ -10,7 +10,7 @@ const DeleteButton = ({id,onDelete}) => {
 
     }
   return (
-    <button onClick={handleDelete}>
+    <button onClick={handleDelete} >
         delete
     </button>
   )

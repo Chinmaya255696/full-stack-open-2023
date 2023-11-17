@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import './index.css'
+import "./index.css";
 import axios from "axios";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
-import PhoneBookService from "./Services/PhoneBook.js"
+import PhoneBookService from "./Services/PhoneBook.js";
 import Notification from "./components/Notification.jsx";
 
 function App() {
@@ -13,74 +13,110 @@ function App() {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [notification, setNotification] = useState("hy notifications");
+  const [notification, setNotification] = useState(null);
 
+  const hook = () => {
+    console.log("effect");
 
-  const hook = () =>{
-    console.log("effect")
-
-   const fetchData = async () =>{
-  try{
-   const data = await PhoneBookService.getAll();
-   console.log("Data Recevied:", data);
-   setPersons(data)
-  }catch(error){
-    console.error("Error fetching data:", error);
-  }
-   }  
-   fetchData();
-  }
-console.log("render", persons.length, "persons");
-  useEffect(hook, [])
+    const fetchData = async () => {
+      try {
+        const data = await PhoneBookService.getAll();
+        console.log("Data Recevied:", data);
+        setPersons(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  };
+  console.log("render", persons.length, "persons");
+  useEffect(hook, []);
 
   const handleAdd = async (event) => {
     event.preventDefault();
     const existingPerson = persons.find((person) => person.name === newName);
 
-    if(existingPerson){
-       // If person already exists, show a confirmation alert
-       const confirmed = window.confirm(`${newName} already exists. Do you want to update the number?`);
+    if (existingPerson) {
+      // If person already exists, show a confirmation alert
+      const confirmed = window.confirm(
+        `${newName} already exists. Do you want to update the number?`
+      );
       if (confirmed) {
         try {
           const updatedPerson = { ...existingPerson, number: newNumber };
-           await axios.put(`http://localhost:3000/persons/${existingPerson.id}`, updatedPerson);
-          setPersons(persons.map(person => (person.id === existingPerson.id ? updatedPerson : person)));
+          await axios.put(
+            `http://localhost:3000/persons/${existingPerson.id}`,
+            updatedPerson
+          );
+          setPersons(
+            persons.map((person) =>
+              person.id === existingPerson.id ? updatedPerson : person
+            )
+          );
           setNotification(
             <>
-            <strong>{updatedPerson.name}</strong> Number is Changed to <strong>{updatedPerson.number}</strong>
+              <strong>{updatedPerson.name}</strong> Number is Changed to{" "}
+              <strong>{updatedPerson.number}</strong>
             </>
-            )
-          setTimeout(()=>{
-            setNotification(null)
-          }, 8000)
+          );
+          setTimeout(() => {
+            setNotification(null);
+          }, 6000);
         } catch (error) {
-          console.error("Error updating phone number:", error);
+          setNotification(
+            <>
+              Information of <strong>{existingPerson.name}</strong>is already
+              remove from the Server,
+            </>
+          );
+          // Change the notification color to red
+          document.querySelector('.notification').style.color = 'red';
+          setTimeout(() => {
+              setNotification(null);
+              // Reset the color back to green
+              document.querySelector('.notification').style.color = 'green';
+          }, 6000);
         }
       }
     } else {
       // If person doesn't exist, add a new person
       try {
-        const newPerson = {  id: persons[persons.length-1].id + 1, name: newName, number: newNumber };
-        const response = await axios.post("http://localhost:3000/persons", newPerson);
+        const newPerson = {
+          id: persons[persons.length - 1].id + 1,
+          name: newName,
+          number: newNumber,
+        };
+        const response = await axios.post(
+          "http://localhost:3000/persons",
+          newPerson
+        );
 
         setPersons(persons.concat(response.data));
-       
+
         setNotification(
           <>
-          added <strong> {newPerson.name} </strong>  to the PhoneBook
+            added <strong> {newPerson.name} </strong> to the PhoneBook
           </>
-          )
-        setTimeout(() =>{
-          setNotification(null)
-        }, 8000)
+        );
+        setTimeout(() => {
+          setNotification(null);
+        }, 8000);
       } catch (error) {
         console.error("Error adding new person:", error);
+        setNotification(
+          <>
+            error adding the info of <strong>{existingPerson.name}</strong>.
+          </>
+        );
+        setTimeout(() => {
+          setNotification(null);
+        }, 6000);
       }
     }
 
-   // Clear the input fields
-   setNewName("");
-   setNewNumber("");
+    // Clear the input fields
+    setNewName("");
+    setNewNumber("");
   };
   const handleSetNewName = (event) => {
     setNewName(event.target.value);
@@ -99,11 +135,10 @@ console.log("render", persons.length, "persons");
   });
   console.log(filteredPersons);
 
-
   return (
     <>
       <h1>PhoneBook</h1>
-      <Notification message={notification}/>
+      <Notification message={notification} />
       <Filter
         searchQuery={searchQuery}
         handleSearchChange={handleSearchChange}
