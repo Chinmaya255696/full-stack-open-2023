@@ -5,7 +5,7 @@ import axios from "axios";
 function CountryInfoApp() {
   const [search, setSearch] = useState("");
   const [countries, setCountries] = useState([]);
-
+const [expandedCountry, setExpandedCountry] = useState(null);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -24,6 +24,12 @@ function CountryInfoApp() {
       setCountries([]);
     }
   }, [search]);
+
+const  handleToggleDetails = (index) =>{
+  setExpandedCountry(
+  (preIndex) => (preIndex === index ? null : index)
+  )
+}
   return (
     <div>
       <h1>Country Info App</h1>
@@ -37,29 +43,56 @@ function CountryInfoApp() {
         />
       </>
 {countries.length === 1 && (
-<div>
-  <h1>{countries[0].name.common}</h1>
-  <p>capital: <strong>{countries[0].capital}</strong></p>
-  <p>area: <strong>{countries[0].area}</strong> square kilometers</p>
-  <p><strong>languages: 
-
-  {Object.values(countries[0].languages).map((language, index) => (
-    <li key={index}>{language}</li>
-  ))}
-  
-  </strong></p>
-  <img src={countries[0].flags.png} alt="Flag" style={{ maxWidth: '200px' }} />
-</div>
-)}
-      {countries.length > 1 && countries.length <= 10 && (
-        <ul>
-          {countries.map((country) => (
-            <li key={country.name.common}>{country.name.common}</li>
+  <div style={{ marginTop: '20px', textAlign: 'left' }}>
+      <h2>{countries[0].name.common}</h2>
+      <p>Capital: {countries[0].capital}</p>
+      <p>Area: {countries[0].area} square kilometers</p>
+      <p>
+        <strong>Languages:</strong>
+        <ul style={{ marginTop: '5px', paddingLeft: '20px' }}>
+          {Object.values(countries[0].languages).map((language, index) => (
+            <li key={index}>{language}</li>
           ))}
         </ul>
-      )}
+      </p>
+      <img src={countries[0].flags.png} alt="Flag" style={{ maxWidth: '200px', marginTop: '20px' }} />
+    </div>
+)}
+      {countries.length > 1 && countries.length <= 10 && (
+       <div>
+        <ul>
+          {countries.map((country, index) => (
+            <li key={index}>
+            {country.name.common} 
+        <button  onClick={() =>  handleToggleDetails(index)}>
+        {expandedCountry === index ? "hide" : "show"}
+        </button>
+
+        {expandedCountry === index &&(
+        <div style={{ marginTop: '20px', textAlign: 'left' }}>
+      <h2>{country.name.common}</h2>
+      <p>Capital: {country.capital}</p>
+      <p>Area: {country.area} square kilometers</p>
+      <p>
+        <strong>Languages:</strong>
+        <ul style={{ marginTop: '5px', paddingLeft: '20px' }}>
+          {Object.values(country.languages).map((language, index) => (
+            <li key={index}>{language}</li>
+          ))}
+        </ul>
+      </p>
+      <img src={country.flags.png} alt="Flag" style={{ maxWidth: '200px', marginTop: '20px' }} />
+    </div>
+       )}
+
+    </li>
+    ))}
+    </ul>
+    </div>
+    )}
+
       {countries.length > 10 && (
-        <p style={{ color: 'red' }}>Too Many matches, Please Specify another Filter</p>
+        <p style={{ color: 'red', marginTop: '20px' }}>Too Many matches, Please Specify another Filter</p>
       )}
     </div>
   );
