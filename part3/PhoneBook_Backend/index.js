@@ -1,7 +1,27 @@
 const express = require("express");
+const morgan = require('morgan');
+
 const app = express();
+// Use Morgan middleware for logging in 'tiny' format
+app.use(morgan('tiny'));
+
+//app.use(morgan('combined'));
+
+
+//app.use(morgan('common'));
+
+
+//app.use(morgan('dev'));
+
+
+//app.use(morgan('short'));
+
+
+
+
 const data = require("./Data");
 app.use(express.json());
+//app.use(requestLogger)
 
 app.get("/api/persons", (req, res) => {
   res.json(data);
