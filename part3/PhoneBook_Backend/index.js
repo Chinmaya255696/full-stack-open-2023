@@ -44,6 +44,29 @@ app.delete("/api/persons/:id", (req, res) => {
   }
   
 })
+let generateId = () =>{
+    const maxId = data.length>0 ? Math.max(...data.map(person => person.id)) : 0
+    return maxId+1
+}
+app.post("/api/persons", (req, res) => {
+    const { name, number } = req.body;
+
+    if (!name || !number) {
+        return res.status(400).send("<h4>Person data is missing</h4>");
+    }
+
+    const person = {
+        name: name, 
+        number: number,
+        id: generateId(),
+    };
+
+    data.push(person);
+
+    return res.json(data);
+});
+
+
 
 const PORT = 3001;
 

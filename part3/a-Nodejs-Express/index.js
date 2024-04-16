@@ -69,7 +69,7 @@ const generateId = () => {
   
     notes = notes.concat(note)
   
-    response.json(note)
+    response.json(notes)
   })
 app.get("/api/notes/:id", (request, response) => {
   const id = Number(request.params.id);
