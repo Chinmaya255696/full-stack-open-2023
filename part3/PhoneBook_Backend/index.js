@@ -27,6 +27,24 @@ app.get("/api/persons/:id", (req, res) => {
   }
 });
 
+app.delete("/api/persons/:id", (req, res) => {
+  const id = Number(req.params.id);
+
+  const personIndex = data.findIndex((person) => {
+    return person.id === id;
+  });
+  console.log(personIndex)
+ if (personIndex !== -1) {
+    data.splice(personIndex, 1);
+   // const data1 = data.filter((human) => human.id !== id);
+    console.log(data);
+    res.status(204).send(`<h3>The Person with id ${id} has been deleted</h3>`)
+  }else{
+    res.status(404).send("<h4>The Person does not exist in our Database</h4>");
+  }
+  
+})
+
 const PORT = 3001;
 
 app.listen(PORT, (req, res) => {
