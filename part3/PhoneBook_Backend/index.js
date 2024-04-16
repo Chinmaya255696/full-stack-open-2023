@@ -1,9 +1,26 @@
 const express = require("express");
-const morgan = require('morgan');
-
+var fs = require('fs')
+var morgan = require('morgan')
+var path = require('path')
+const data = require("./Data");
 const app = express();
+
+// create a write stream (in append mode)
+//var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+
+// setup the logger
+//app.use(morgan('tiny', { stream: accessLogStream }))
+
+// Define a custom token for logging request body data
+morgan.token('req-body', (req) => {
+    return JSON.stringify(req.body);
+  })
+
+// Setup the logger with Morgan middleware, including the custom token
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :req-body'));
+
 // Use Morgan middleware for logging in 'tiny' format
-app.use(morgan('tiny'));
+//app.use(morgan('tiny'));
 
 //app.use(morgan('combined'));
 
@@ -19,7 +36,7 @@ app.use(morgan('tiny'));
 
 
 
-const data = require("./Data");
+
 app.use(express.json());
 //app.use(requestLogger)
 
