@@ -1,6 +1,0 @@
-POST /api/persons/ 200 271 - 44.677 ms
-POST /api/persons/ 400 65 - 3.140 ms
-POST /api/persons/ 200 271 - 31.935 ms
-POST /api/persons/ 400 65 - 24.026 ms
-POST /api/persons/ 400 65 - 3.637 ms
-POST /api/persons/ 200 271 - 234.626 ms {"name":"Chinmaya","number":"989854654"}

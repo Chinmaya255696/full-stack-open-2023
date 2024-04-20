@@ -1,5 +1,10 @@
 const express = require('express')
+const cors = require('cors');
+require('dotenv').config();
 const app = express()
+// Enable CORS for all routes
+app.use(cors());
+app.use(express.static('dist'))
 
 let notes = [
   {
@@ -80,16 +85,29 @@ app.get('/api/notes/:id', (request, response) => {
   }
 })
 
-app.delete('/api/notes/:id', (request, response) => {
-  const id = Number(request.params.id)
-  notes = notes.filter(note => note.id !== id)
+// app.delete('/api/notes/:id', (request, response) => {
+//   const id = Number(request.params.id)
+//   notes = notes.filter(note => note.id !== id)
 
-  response.status(204).end()
+//   response.status(204).end()
+// })
+app.put("/api/notes/:id", (request, response) => {
+  const id = Number(request.params.id)
+  const note = notes.find(note => note.id === id)
+  const body = request.body
+  if (body.content) {
+    note.content = body.content
+  }
+  if (body.important) {
+    note.important = body.important
+  }
+  response.json(note)
 })
 
 app.use(unknownEndpoint)
 
-const PORT = 3001
+const PORT = process.env.PORT || 3000
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })

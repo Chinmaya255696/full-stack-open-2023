@@ -5,15 +5,21 @@ var path = require('path')
 const data = require("./Data");
 const app = express();
 
+// Create a 'logs' directory if it doesn't exist
+// const logsDir = path.join(__dirname, 'logs');
+// if (!fs.existsSync(logsDir)) {
+//   fs.mkdirSync(logsDir);
+// }
+
 // create a write stream (in append mode)
-//var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+//var accessLogStream = fs.createWriteStream(path.join(logsDir, 'access.log'), { flags: 'a' })
 
 // setup the logger
 //app.use(morgan('tiny', { stream: accessLogStream }))
 
 // Define a custom token for logging request body data
 morgan.token('req-body', (req) => {
-    return JSON.stringify(req.body);
+   return JSON.stringify(req.body);
   })
 
 // Setup the logger with Morgan middleware, including the custom token
