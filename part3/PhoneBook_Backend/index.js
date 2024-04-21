@@ -3,7 +3,16 @@ var fs = require('fs')
 var morgan = require('morgan')
 var path = require('path')
 const data = require("./Data");
+const cors = require("cors");
 const app = express();
+
+// Enable CORS for all routes and origins
+app.use(cors());
+
+// Alternatively, configure CORS for specific origins
+app.use(cors({
+  origin: 'http://localhost:5173' // Only allow this origin to access
+}));
 
 // Create a 'logs' directory if it doesn't exist
 // const logsDir = path.join(__dirname, 'logs');
@@ -45,7 +54,10 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :r
 
 app.use(express.json());
 //app.use(requestLogger)
-
+// Define your routes here
+app.get('/', (req, res) => {
+  res.json({ message: 'This is CORS-enabled for only localhost:5173.' });
+});
 app.get("/api/persons", (req, res) => {
   res.json(data);
 });
@@ -119,8 +131,8 @@ app.post("/api/persons", (req, res) => {
   return res.json(data);
 });
 
-const PORT = 3001;
+const PORT = 3000;
 
 app.listen(PORT, (req, res) => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(` Server running on http://localhost:${PORT}`);
 });
