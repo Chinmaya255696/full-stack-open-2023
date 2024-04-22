@@ -4,6 +4,7 @@ var morgan = require('morgan')
 var path = require('path')
 const data = require("./Data");
 const cors = require("cors");
+
 const app = express();
 
 // Enable CORS for all routes and origins
@@ -13,7 +14,8 @@ app.use(cors());
 app.use(cors({
   origin: 'http://localhost:5173' // Only allow this origin to access
 }));
-
+// Serve static files from the `dist` directory
+app.use(express.static(path.join(__dirname, 'dist')));
 // Create a 'logs' directory if it doesn't exist
 // const logsDir = path.join(__dirname, 'logs');
 // if (!fs.existsSync(logsDir)) {
