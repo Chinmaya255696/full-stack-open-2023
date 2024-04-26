@@ -69,67 +69,111 @@ app.get("/api/persons", (req, res) => {
     .catch(err => res.status(500).json({ error: 'Failed to fetch data' }));
 });
 
-
-
-app.get("/info", (req, res) => {
-  let info = `Phoneboook has info of ${data.length} People <br/>
-    ${Date()} `;
-  res.send(info);
-});
-
-app.get("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-
-  const person = data.find((person) => {
-    return person.id === id;
+app.get("/info", (req, res, next) => {
+  Person.countDocuments().then(count => {
+    let info = `Phonebook has info of ${count} people <br/>${new Date().toUTCString()}`;
+    res.send(info);
+  }).catch(error => {
+    next(error); // Pass the error to Express's global error handler
   });
-
-  if (person) {
-    res.json(person);
-  } else {
-    res.status(404).send("<h4>The Person does not exist in our Database</h4>");
-  }
 });
 
-app.delete("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-
-  const personIndex = data.findIndex((person) => {
-    return person.id === id;
-  });
-  console.log(personIndex);
-  if (personIndex !== -1) {
-    data.splice(personIndex, 1);
-    // const data1 = data.filter((human) => human.id !== id);
-    console.log(data);
-    res.status(204).send(`<h3>The Person with id ${id} has been deleted</h3>`);
-  } else {
-    res.status(404).send("<h4>The Person does not exist in our Database</h4>");
-  }
+app.get("/api/persons/:id", (req, res, next) => {
+  Person.findById(req.params.id)
+    .then(person => {
+      if (person) {
+        res.json(person);
+      } else {
+        res.status(404).send("<h4>The Person does not exist in our Database</h4>");
+      }
+    })
+    .catch(error => {
+      next(error); 
+    });
 });
-let generateId = () => {
-  const maxId =
-    data.length > 0 ? Math.max(...data.map((person) => person.id)) : 0;
-  return maxId + 1;
-};
 
 
-app.post("/api/persons", (req, res) => {
+
+
+app.delete('/api/persons/:id', (req, res, next) => {
+  const { id } = req.params;
+  console.log(req.params,"Params Data")
+  if (!id) {
+      return res.status(400).send({ error: 'Missing ID for deletion' });
+  }
+
+  Person.findByIdAndDelete(id)
+      .then(result => {
+          if (result) {
+              res.status(204).end();
+          } else {
+              res.status(404).send({ error: 'No person found with that ID' });
+          }
+      })
+      .catch(error => next(error));
+});
+
+
+
+
+
+
+
+app.post("/api/persons", (req, res, next) => {
   const { name, number } = req.body;
 
   if (!name || !number) {
-    return res.status(400).json({ error: 'Both name and number are required' });
+    const error = new Error('Both name and number are required');
+    error.status = 400;
+    return next(error);
   }
 
+  // Create a new person without checking for existing one
   const person = new Person({ name, number });
-
   person.save()
     .then(savedPerson => res.json(savedPerson))
-    .catch(err => res.status(500).json({ error: 'Failed to save data' }));
+    .catch(err => next(err));  // Handle errors in saving the new person
 });
 
-const PORT = 3000;
 
+app.put('/api/persons/:id', (request, response, next) => {
+	const { name, number } = request.body
+
+	Person.findByIdAndUpdate(
+		request.params.id,
+		{ name, number },
+		{ new: true, runValidators: true, context: 'query' }
+	)
+		.then(updatedPerson => {
+			response.json(updatedPerson)
+		})
+		.catch(error => next(error))
+})
+
+
+const errorHandler = (error, req, res, next) => {
+  console.error(error.message);
+
+  if (error.name === 'CastError' && error.kind === 'ObjectId') {
+    return res.status(400).send({ error: 'Malformatted ID' });
+  } else if (error.name === 'ValidationError') {
+    return res.status(400).json({ error: error.message });
+  } else if (error.name === 'DocumentNotFoundError') {
+    return res.status(404).json({ error: 'Document not found' });
+  } else if (error.code && error.code === 11000) {
+    return res.status(409).json({ error: 'Duplicate key error: ' + error.message });
+  } else if (error.name === 'MongoServerError') {
+    return res.status(500).json({ error: 'Database error: ' + error.message });
+  }
+
+  // If the error is not recognized, pass it to the default Express error handler
+  // that will consider it an internal server error (500)
+  next(error);
+}
+
+app.use(errorHandler);
+
+const PORT = 3000;
 app.listen(PORT, (req, res) => {
   console.log(` Server running on http://localhost:${PORT}`);
 });

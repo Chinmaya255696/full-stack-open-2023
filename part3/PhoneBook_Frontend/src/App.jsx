@@ -45,12 +45,12 @@ function App() {
         try {
           const updatedPerson = { ...existingPerson, number: newNumber };
           await axios.put(
-            `http://localhost:3000/api/persons/${existingPerson.id}`,
+            `http://localhost:3000/api/persons/${existingPerson._id}`,
             updatedPerson
           );
           setPersons(
             persons.map((person) =>
-              person.id === existingPerson.id ? updatedPerson : person
+              person._id === existingPerson._id ? updatedPerson : person
             )
           );
           setNotification(
@@ -82,7 +82,6 @@ function App() {
       // If person doesn't exist, add a new person
       try {
         const newPerson = {
-          id: persons[persons.length - 1].id + 1,
           name: newName,
           number: newNumber,
         };
