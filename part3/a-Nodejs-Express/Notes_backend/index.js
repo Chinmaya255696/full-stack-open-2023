@@ -1,7 +1,9 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
-require('dotenv').config();
+const Note = require('./model/note')
+
 
 const app = express();
 
@@ -27,56 +29,40 @@ app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>');
 });
 
-let notes = [
-  {
-    id: 1,
-    content: "HTML is easy",
-    important: true
-  },
-  {
-    id: 2,
-    content: "Browser can execute only JavaScript",
-    important: false
-  },
-  {
-    id: 3,
-    content: "GET and POST are the most important methods of HTTP protocol",
-    important: true
-  }
-];
+
+
+
+
+
 
 app.get('/api/notes', (request, response) => {
-  response.json(notes);
+  Note.find({}).then(notes => {
+    response.json(notes)
+  })
 });
 
 app.post('/api/notes', (request, response) => {
-  const body = request.body;
+  const body = request.body
 
-  if (!body.content) {
-    return response.status(400).json({ 
-      error: 'content missing' 
-    });
+  if (body.content === undefined) {
+    return response.status(400).json({ error: 'content missing' })
   }
 
-  const note = {
+  const note = new Note({
     content: body.content,
     important: body.important || false,
-    id: notes.length > 0 ? Math.max(...notes.map(n => n.id)) + 1 : 1,
-  };
+  })
 
-  notes = notes.concat(note);
-  response.json(note);
-});
+  note.save().then(savedNote => {
+    response.json(savedNote)
+  })
+})
 
 app.get('/api/notes/:id', (request, response) => {
-  const id = Number(request.params.id);
-  const note = notes.find(note => note.id === id);
-  if (note) {
-    response.json(note);
-  } else {
-    response.status(404).send({ error: 'Note not found' });
-  }
-});
+  Note.findById(request.params.id).then(note => {
+    response.json(note)
+  })
+})
 
 app.put("/api/notes/:id", (request, response) => {
   const id = Number(request.params.id);
