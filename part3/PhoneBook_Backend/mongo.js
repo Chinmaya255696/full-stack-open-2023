@@ -5,12 +5,7 @@ if (process.argv.length<3) {
     process.exit(1)
   }
   
-  const password = process.argv[2]
-  
-// Encode any special characters in the password
-const encodedPassword = encodeURIComponent(password);
 
-const url =`mongodb+srv://chinu:${encodedPassword}@cluster0.sjmvjjm.mongodb.net/?retryWrites=true&w=majority&appName=PhoneBook`
 
 mongoose.set('strictQuery',false)
 

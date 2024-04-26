@@ -4,6 +4,7 @@ var morgan = require('morgan')
 var path = require('path')
 const data = require("./Data");
 const cors = require("cors");
+const Person = require('./models/PhoneBook');
 
 const app = express();
 
@@ -56,13 +57,19 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :r
 
 app.use(express.json());
 //app.use(requestLogger)
+
 // Define your routes here
 app.get('/', (req, res) => {
   res.json({ message: 'This is CORS-enabled for only localhost:5173.' });
 });
+
 app.get("/api/persons", (req, res) => {
-  res.json(data);
+  Person.find({})
+    .then(persons => res.json(persons))
+    .catch(err => res.status(500).json({ error: 'Failed to fetch data' }));
 });
+
+
 
 app.get("/info", (req, res) => {
   let info = `Phoneboook has info of ${data.length} People <br/>
@@ -105,32 +112,20 @@ let generateId = () => {
     data.length > 0 ? Math.max(...data.map((person) => person.id)) : 0;
   return maxId + 1;
 };
+
+
 app.post("/api/persons", (req, res) => {
   const { name, number } = req.body;
 
   if (!name || !number) {
-    return res
-      .status(400)
-      .send("<h4>Person both name or number is missing</h4>");
+    return res.status(400).json({ error: 'Both name and number are required' });
   }
 
-  exsistingPerson = data.find((person) => person.name === name);
+  const person = new Person({ name, number });
 
-  if (exsistingPerson) {
-    return res
-      .status(400)
-      .send(`<h4>The Person named ${name} already exists in our Database</h4>`);
-  }
-
-  const person = {
-    name: name,
-    number: number,
-    id: generateId(),
-  };
-
-  data.push(person);
-
-  return res.json(data);
+  person.save()
+    .then(savedPerson => res.json(savedPerson))
+    .catch(err => res.status(500).json({ error: 'Failed to save data' }));
 });
 
 const PORT = 3000;
