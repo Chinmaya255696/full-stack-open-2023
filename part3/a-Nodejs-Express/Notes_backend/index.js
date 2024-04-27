@@ -54,8 +54,6 @@ app.post("/api/notes", (request, response) => {
   });
 });
 
-
-
 app.get("/api/notes/:id", (request, response, next) => {
   Note.findById(request.params.id)
     .then((note) => {
@@ -69,28 +67,30 @@ app.get("/api/notes/:id", (request, response, next) => {
     .catch((error) => next(error));
 });
 
+
 app.put('/api/notes/:id', (request, response, next) => {
-  const body = request.body
 
-  const note = {
-    content: body.content,
-    important: body.important,
-  }
+  const { content, important } = request.body
 
-  Note.findByIdAndUpdate(request.params.id, note, { new: true })
+  Note.findByIdAndUpdate(
+    request.params.id, 
+
+    { content, important },
+    { new: true, runValidators: true, context: 'query' }
+  ) 
     .then(updatedNote => {
       response.json(updatedNote)
     })
     .catch(error => next(error))
 })
 
-app.delete('/api/notes/:id', (request, response, next) => {
+app.delete("/api/notes/:id", (request, response, next) => {
   Note.findByIdAndDelete(request.params.id)
-    .then(result => {
-      response.status(204).end()
+    .then((result) => {
+      response.status(204).end();
     })
-    .catch(error => next(error))
-})
+    .catch((error) => next(error));
+});
 
 // SPA fallback route
 app.get("*", (req, res) => {
@@ -108,7 +108,10 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
+  }else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
   }
+
 
   next(error);
 };
