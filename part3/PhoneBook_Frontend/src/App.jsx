@@ -9,7 +9,6 @@ import Notification from "./components/Notification.jsx";
 
 function App() {
   const [persons, setPersons] = useState([]);
-
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -62,21 +61,41 @@ function App() {
           setTimeout(() => {
             setNotification(null);
           }, 6000);
-        } catch (error) {
+         } catch (error) {
+        //   setNotification(
+        //     <>
+        //       Information of <strong>{existingPerson.name}</strong>is already
+        //       remove from the Server,
+        //     </>
+        //   );
+        //   // Change the notification color to red
+        //   document.querySelector(".notification").style.color = "red";
+        //   setTimeout(() => {
+        //     setNotification(null);
+        //     // Reset the color back to green
+        //     document.querySelector(".notification").style.color = "green";
+        //   }, 6000);
+        // }
+
+        console.error("Error adding new person:", error);
+        // Handle error response appropriately
+        const errorMessage =
+          error.response && error.response.data && error.response.data.error
+            ? error.response.data.error
+            : "Failed to add person due to an unexpected error."; // Fallback message if the error structure is unknown
+        
           setNotification(
-            <>
-              Information of <strong>{existingPerson.name}</strong>is already
-              remove from the Server,
-            </>
+          
+          <>
+              <strong style={{ color: "red" }}>Error adding {newName}: {errorMessage} </strong>
+          </>
+         
           );
-          // Change the notification color to red
-          document.querySelector('.notification').style.color = 'red';
-          setTimeout(() => {
-              setNotification(null);
-              // Reset the color back to green
-              document.querySelector('.notification').style.color = 'green';
-          }, 6000);
-        }
+        
+        setTimeout(() => {
+          setNotification(null);
+        }, 6000);
+      }
       }
     } else {
       // If person doesn't exist, add a new person
@@ -101,12 +120,22 @@ function App() {
           setNotification(null);
         }, 8000);
       } catch (error) {
+       
         console.error("Error adding new person:", error);
-        setNotification(
+        // Handle error response appropriately
+        const errorMessage =
+          error.response && error.response.data && error.response.data.error
+            ? error.response.data.error
+            : "Failed to add person due to an unexpected error."; // Fallback message if the error structure is unknown
+        
+          setNotification(
+          
           <>
-            error adding the info of <strong>{existingPerson.name}</strong>.
+              <strong style={{ color: "red" }}>Error adding {newName}: {errorMessage} </strong>
           </>
-        );
+         
+          );
+        
         setTimeout(() => {
           setNotification(null);
         }, 6000);

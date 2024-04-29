@@ -1,3 +1,6 @@
+require('dotenv').config(); // Ensure this is on top if it's not in db.js
+require('./DB/db');
+
 const express = require("express");
 var fs = require('fs')
 var morgan = require('morgan')
@@ -15,6 +18,7 @@ app.use(cors());
 app.use(cors({
   origin: 'http://localhost:5173' // Only allow this origin to access
 }));
+
 // Serve static files from the `dist` directory
 app.use(express.static(path.join(__dirname, 'dist')));
 // Create a 'logs' directory if it doesn't exist
@@ -137,33 +141,38 @@ app.post("/api/persons", (req, res, next) => {
 
 
 app.put('/api/persons/:id', (request, response, next) => {
-	const { name, number } = request.body
+  const { name, number } = request.body;
 
-	Person.findByIdAndUpdate(
-		request.params.id,
-		{ name, number },
-		{ new: true, runValidators: true, context: 'query' }
-	)
-		.then(updatedPerson => {
-			response.json(updatedPerson)
-		})
-		.catch(error => next(error))
-})
+  Person.findByIdAndUpdate(
+      request.params.id,
+      { name, number },
+      { new: true, runValidators: true, context: 'query' } // Ensure validators run
+  )
+  .then(updatedPerson => {
+      if (!updatedPerson) {
+          response.status(404).send({ error: "Person not found" });
+      } else {
+          response.json(updatedPerson);
+      }
+  })
+  .catch(error => next(error)); 
+});
+
 
 
 const errorHandler = (error, req, res, next) => {
   console.error(error.message);
 
   if (error.name === 'CastError' && error.kind === 'ObjectId') {
-    return res.status(400).send({ error: 'Malformatted ID' });
+    return res.status(400).json({ error: 'Malformatted ID - The provided ID is not valid.' });
   } else if (error.name === 'ValidationError') {
     return res.status(400).json({ error: error.message });
   } else if (error.name === 'DocumentNotFoundError') {
-    return res.status(404).json({ error: 'Document not found' });
+    return res.status(404).json({ error: 'No document found with the provided ID.' });
   } else if (error.code && error.code === 11000) {
-    return res.status(409).json({ error: 'Duplicate key error: ' + error.message });
+    return res.status(409).json({ error: 'Duplicate key error - the entered data conflicts with existing data.' });
   } else if (error.name === 'MongoServerError') {
-    return res.status(500).json({ error: 'Database error: ' + error.message });
+    return res.status(500).json({ error: 'Internal MongoDB server error.' });
   }
 
   // If the error is not recognized, pass it to the default Express error handler
@@ -172,6 +181,7 @@ const errorHandler = (error, req, res, next) => {
 }
 
 app.use(errorHandler);
+
 
 const PORT = 3000;
 app.listen(PORT, (req, res) => {
