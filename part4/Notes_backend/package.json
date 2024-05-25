@@ -1,0 +1,28 @@
+{
+  "name": "a-nodejs-express",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "build:ui": "rm -rf dist && cd ../Notes_frontend && npm run build && cp -r dist ../Notes_backend",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.3.2"
+  },
+  "devDependencies": {
+    "@stylistic/eslint-plugin-js": "^1.7.2",
+    "eslint": "^9.1.1",
+    "globals": "^15.1.0",
+    "nodemon": "^3.1.0"
+  }
+}
